@@ -18,15 +18,3 @@ class MyColors {
   static const Color miloYellow = Color(0xffF9F871);
   static const Color whiteyDilin = Color(0xffB8E067);
 }
-
-class Translate extends Translations {
-  @override
-  Map<String, Map<String, String>> get keys => {
-        'en_US': {
-          'hello': 'Hello World',
-        },
-        'fa_IR': {
-          'hello': 'سلام دنیا',
-        }
-      };
-}
