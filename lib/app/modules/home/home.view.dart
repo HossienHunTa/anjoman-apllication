@@ -1,23 +1,37 @@
-// ignore_for_file: file_names, must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:anjoman/app/data/services/auth.service.dart';
 
-class HomePage extends GetView {
-  const HomePage({
-    super.key,
-  });
+import 'home.controller.dart';
+
+class Home extends GetView<HomeController> {
+  final AuthService _authService = Get.find();
+  Home({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (controller.isLogged.value) {
-      Get.offAllNamed('/signIn');
-      return const Center(child: CircularProgressIndicator());
-    } else {
-      return Scaffold(
-        appBar: AppBar(),
-        body: const Center(child: Text('HomePage')),
-      );
-    }
+    return Scaffold(
+      body: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text('صفحه اصلی'),
+          Image.network(
+            _authService.user.value.avatarUrl,
+            width: 100,
+            height: 100,
+          ),
+          Obx(() => Text(
+              'سلام \n ایمیل شما : ${_authService.user.value.email}\n رمز شما : ${_authService.user.value.password}')),
+          ElevatedButton(
+            onPressed: () {
+              _authService.logout();
+            },
+            child: const Text('خروج'),
+          ),
+        ],
+      )),
+    );
   }
 }

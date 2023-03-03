@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 // Package>flutter lib
+import 'package:anjoman/app/data/services/auth.service.dart';
 import 'package:flutter/material.dart';
 // Package>pub lib
 import 'package:get/get.dart';
@@ -9,23 +10,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Package>Anjoman>Core
-import 'package:anjoman/core/colors.dart';
 import 'package:anjoman/core/languages.dart';
+import 'package:anjoman/core/themes.dart';
 import 'package:anjoman/core/consts.dart';
 // Package>Anjoman>routes>Pages
 import 'package:anjoman/routes/pages.dart';
 // Package>Anjoman>app>data>service
-import 'package:anjoman/app/data/services/auth.service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //Access Service and Storage Data
-  await dotenv.load(fileName: ".env");
-  await GetStorage.init();
-  await Supabase.initialize(
-    url: dotenv.get('URL'),
-    anonKey: dotenv.get('ANONKEY'),
-  );
+  await initializeApp();
   final ApplicationSetting = GetStorage('ApplicationSetting');
   (!ApplicationSetting.hasData('firstTime_Applaunch'))
       ? ApplicationSetting.write('firstTime_Applaunch', true)
@@ -35,24 +29,8 @@ void main() async {
     GetMaterialApp(
       title: 'انجمن',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          fontFamily: 'Mitra',
-          primaryColor: MyColors.miloOrange,
-          scaffoldBackgroundColor: MyColors.willowSky,
-          brightness: Brightness.light,
-          buttonTheme: const ButtonThemeData(
-            buttonColor: MyColors.sweetOrange,
-            disabledColor: MyColors.karBlue,
-          )),
-      darkTheme: ThemeData(
-          fontFamily: 'Mitra',
-          primaryColor: MyColors.miloOrange,
-          scaffoldBackgroundColor: MyColors.stormyBrew,
-          brightness: Brightness.dark,
-          buttonTheme: const ButtonThemeData(
-            buttonColor: MyColors.darkLightBlue,
-            disabledColor: MyColors.karBlue,
-          )),
+      theme: MyTheme.theme,
+      darkTheme: MyTheme.darkTheme,
       themeMode: ThemeMode.dark,
       defaultTransition: Transition.circularReveal,
       localizationsDelegates: Languages.localizationsDelegates,
@@ -65,4 +43,16 @@ void main() async {
       unknownRoute: AppPages.unknownRoute,
     ),
   );
+}
+
+Future<void> initializeApp() async {
+  //Access Service and Storage Data
+  await dotenv.load(fileName: ".env");
+  await GetStorage.init();
+  await Supabase.initialize(
+    url: dotenv.get('URL'),
+    anonKey: dotenv.get('ANONKEY'),
+  );
+  AuthService _authService = Get.put(AuthService());
+  Get.log('Initialize');
 }
